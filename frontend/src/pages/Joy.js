@@ -9,7 +9,7 @@ function Joy() {
   const [callStatus, setCallStatus] = useState('');
   const [pollResult, setPollResult] = useState([]);
 
-  const apiUrl = "https://bhbackend.whitecliff-47e35800.uksouth.azurecontainerapps.io";
+  const apiUrl = 'https://bhbackend.whitecliff-47e35800.uksouth.azurecontainerapps.io';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
