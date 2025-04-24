@@ -1,43 +1,86 @@
-name: Build and Deploy FastAPI to Azure Container Apps
+name: Build and Deploy Frontend & Backend
 
 on:
   push:
-    branches:
-      - main
+    branches: [dev]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      ACR_NAME: bughunters33acr
+      ACR_LOGIN_SERVER: bughunters33acr.azurecr.io
+      RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      CONTAINERAPP_ENV: managedEnvironment-Team33-8847
+      LOCATION: uksouth
+      FRONTEND_APP_NAME: bhfrontend
+      BACKEND_APP_NAME: bhbackend
+      FRONTEND_IMAGE: bughunters33acr.azurecr.io/bhfrontend:latest
+      BACKEND_IMAGE: bughunters33acr.azurecr.io/bhbackend:latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Log in to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Log in to ACR
-        run: |
-          echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_NAME }}.azurecr.io --username ${{ secrets.ACR_USERNAME }} --password-stdin
+    - name: Log in to ACR
+      run: az acr login --name $ACR_NAME
 
-      - name: Build and push Docker image
-        run: |
-          docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/bughunters33app:latest .
-          docker push ${{ secrets.ACR_NAME }}.azurecr.io/bughunters33app:latest
+    - name: Build and push frontend Docker image
+      run: |
+        docker build -t $FRONTEND_IMAGE ./frontend
+        docker push $FRONTEND_IMAGE
 
-      - name: Deploy to Azure Container Apps
-        run: |
+    - name: Build and push backend Docker image
+      run: |
+        docker build -t $BACKEND_IMAGE ./backend
+        docker push $BACKEND_IMAGE
+
+    - name: Create frontend app if not exists
+      run: |
+        if ! az containerapp show --name $FRONTEND_APP_NAME --resource-group $RESOURCE_GROUP &> /dev/null; then
           az containerapp create \
-            --name ${{ secrets.CONTAINER_APP_NAME }} \
-            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --image ${{ secrets.ACR_NAME }}.azurecr.io/bughunters33app:latest \
-            --environment ${{ secrets.CONTAINER_APP_ENV }} \
+            --name $FRONTEND_APP_NAME \
+            --resource-group $RESOURCE_GROUP \
+            --environment $CONTAINERAPP_ENV \
+            --image $FRONTEND_IMAGE \
+            --target-port 80 \
             --ingress external \
+            --registry-server $ACR_LOGIN_SERVER \
+            --registry-username $(az acr credential show --name $ACR_NAME --query "username" -o tsv) \
+            --registry-password $(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv)
+        fi
+
+    - name: Create backend app if not exists
+      run: |
+        if ! az containerapp show --name $BACKEND_APP_NAME --resource-group $RESOURCE_GROUP &> /dev/null; then
+          az containerapp create \
+            --name $BACKEND_APP_NAME \
+            --resource-group $RESOURCE_GROUP \
+            --environment $CONTAINERAPP_ENV \
+            --image $BACKEND_IMAGE \
             --target-port 8000 \
-            --cpu 0.5 \
-            --memory 1.0Gi \
-            --registry-server ${{ secrets.ACR_NAME }}.azurecr.io \
-            --registry-username ${{ secrets.ACR_USERNAME }} \
-            --registry-password ${{ secrets.ACR_PASSWORD }}
+            --ingress external \
+            --registry-server $ACR_LOGIN_SERVER \
+            --registry-username $(az acr credential show --name $ACR_NAME --query "username" -o tsv) \
+            --registry-password $(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv)
+        fi
+
+    - name: Update frontend app
+      run: |
+        az containerapp update \
+          --name $FRONTEND_APP_NAME \
+          --resource-group $RESOURCE_GROUP \
+          --image $FRONTEND_IMAGE
+
+    - name: Update backend app
+      run: |
+        az containerapp update \
+          --name $BACKEND_APP_NAME \
+          --resource-group $RESOURCE_GROUP \
+          --image $BACKEND_IMAGE

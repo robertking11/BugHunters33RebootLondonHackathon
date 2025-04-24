@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import Joy from './pages/Joy';
 import Conversations from './pages/Conversations';
 import Home from './pages/Home';
@@ -12,9 +12,30 @@ function App() {
         <div className="side-menu">
           <h2>Menu</h2>
           <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/joy">Talk to Joy</Link></li>
-            <li><Link to="/conversations">Conversations</Link></li>
+            <li>
+              <NavLink
+                to="/"
+                className={({ isActive }) => (isActive ? 'active-link' : '')}
+              >
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/joy"
+                className={({ isActive }) => (isActive ? 'active-link' : '')}
+              >
+                Talk to Joy
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/conversations"
+                className={({ isActive }) => (isActive ? 'active-link' : '')}
+              >
+                Conversations
+              </NavLink>
+            </li>
           </ul>
         </div>
         <div className="content-container">
