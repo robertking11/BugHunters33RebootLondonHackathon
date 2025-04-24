@@ -43,7 +43,7 @@ jobs:
 
     - name: Create frontend app if not exists
       run: |
-         containerapp create \
+        az containerapp create \
         --name $FRONTEND_APP_NAME \
         --resource-group $RESOURCE_GROUP \
         --environment $CONTAINERAPP_ENV \
@@ -52,18 +52,19 @@ jobs:
         --ingress external \
         --registry-server $ACR_LOGIN_SERVER \
         --registry-username $(az acr credential show --name $ACR_NAME --query "username" -o tsv) \
-        --registry-password $(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv)
+        --registry-password $(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv) \
         --env-vars ELEVENLABS_API_KEY=${{ secrets.ELEVENLABS_API_KEY }} \
-                AGENT_ID=${{ secrets.AGENT_ID }} \
-                AGENT_PHONE_NUMBER_ID=${{ secrets.AGENT_PHONE_NUMBER_ID }} \
-                TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} \
-                TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }} \
-                AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }} \
-                AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }} \
-                AZURE_OPENAI_LOCATION=${{ secrets.AZURE_OPENAI_LOCATION }}
+                  AGENT_ID=${{ secrets.AGENT_ID }} \
+                  AGENT_PHONE_NUMBER_ID=${{ secrets.AGENT_PHONE_NUMBER_ID }} \
+                  TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} \
+                  TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }} \
+                  AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }} \
+                  AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }} \
+                  AZURE_OPENAI_LOCATION=${{ secrets.AZURE_OPENAI_LOCATION }}
 
     - name: Create backend app if not exists
       run: |
+        az containerapp show --name $BACKEND_APP_NAME --resource-group $RESOURCE_GROUP &> /dev/null || \
         az containerapp create \
           --name $BACKEND_APP_NAME \
           --resource-group $RESOURCE_GROUP \
@@ -73,12 +74,12 @@ jobs:
           --ingress external \
           --registry-server $ACR_LOGIN_SERVER \
           --registry-username $(az acr credential show --name $ACR_NAME --query "username" -o tsv) \
-          --registry-password $(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv)
+          --registry-password $(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv) \
           --env-vars ELEVENLABS_API_KEY=${{ secrets.ELEVENLABS_API_KEY }} \
-                  AGENT_ID=${{ secrets.AGENT_ID }} \
-                  AGENT_PHONE_NUMBER_ID=${{ secrets.AGENT_PHONE_NUMBER_ID }} \
-                  TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} \
-                  TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }} \
-                  AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }} \
-                  AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }} \
-                  AZURE_OPENAI_LOCATION=${{ secrets.AZURE_OPENAI_LOCATION }}
+                     AGENT_ID=${{ secrets.AGENT_ID }} \
+                     AGENT_PHONE_NUMBER_ID=${{ secrets.AGENT_PHONE_NUMBER_ID }} \
+                     TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} \
+                     TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }} \
+                     AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }} \
+                     AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }} \
+                     AZURE_OPENAI_LOCATION=${{ secrets.AZURE_OPENAI_LOCATION }}
