@@ -2,7 +2,7 @@ name: Build and Deploy Frontend & Backend
 
 on:
   push:
-    branches: [dev]
+    branches: [dev-rob]
 
 jobs:
   deploy:
