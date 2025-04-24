@@ -9,11 +9,13 @@ function Joy() {
   const [callStatus, setCallStatus] = useState('');
   const [pollResult, setPollResult] = useState([]);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form submitted with phone number:', phoneInput);
     try {
-      const response = await fetch('/call', {
+      const response = await fetch(`${apiUrl}/call`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone_number: phoneInput }),

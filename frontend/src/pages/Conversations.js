@@ -5,10 +5,12 @@ function Conversations() {
   const [conversations, setConversations] = useState([]);
   const [error, setError] = useState('');
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const response = await fetch('/latest_transcript_summary');
+        const response = await fetch(`${apiUrl}/latest_transcript_summary`);
         const data = await response.json();
         if (response.ok) {
           setConversations([data] || []);

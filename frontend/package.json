@@ -1,5 +1,4 @@
 {
-  "proxy": "https://bhbackend.whitecliff-47e35800.uksouth.azurecontainerapps.io",
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
