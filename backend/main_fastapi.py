@@ -8,7 +8,6 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from requests.auth import HTTPBasicAuth
@@ -20,7 +19,6 @@ from typing import Dict
 load_dotenv()
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
 
 app.add_middleware(
     CORSMiddleware,
@@ -83,11 +81,6 @@ def get_conversation_data(conversation_id: str):
     if hasattr(detail, '__dict__'):
         return dict(detail.__dict__)
     return detail
-
-@app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
-    """Render the main page with form for outbound call initiation."""
-    return templates.TemplateResponse("index.html", {"request": request, "status_msg": None, "call_status": None, "phone_input": "", "flash_message": None, "flash_category": None})
 
 @app.post("/call", response_class=HTMLResponse)
 async def make_call(request: Request):

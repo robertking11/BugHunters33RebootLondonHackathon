@@ -18,6 +18,14 @@ jobs:
       BACKEND_APP_NAME: bhbackend
       FRONTEND_IMAGE: bughunters33acr.azurecr.io/bhfrontend:latest
       BACKEND_IMAGE: bughunters33acr.azurecr.io/bhbackend:latest
+      ELEVENLABS_API_KEY: sk_91f9b7390b7949a83531231b4ed73af1ca730298470ab2d5
+      AGENT_ID: ThVxkzMQftJNpMm2MPXT
+      AGENT_PHONE_NUMBER_ID: 2HRr0XRdZWAGqFGtYroR
+      TWILIO_ACCOUNT_SID: ACd037a64e0ea1a774f68d06b9dbd4ddd0
+      TWILIO_AUTH_TOKEN: fd66cfd329cc490252c587073dfae597
+      AZURE_OPENAI_API_KEY: 3wDAw7ArvzOHjp7PD1htuaigIw5TzPQn9ZSbqi01ZaOuYPK8XpPMJQQJ99BDACmepeSXJ3w3AAABACOGffAG
+      AZURE_OPENAI_ENDPOINT: https://rebootllm.openai.azure.com/
+      AZURE_OPENAI_LOCATION: uksouth
 
     steps:
     - name: Checkout code
@@ -43,44 +51,42 @@ jobs:
 
     - name: Create frontend app if not exists
       run: |
-        if ! az containerapp show --name $FRONTEND_APP_NAME --resource-group $RESOURCE_GROUP &> /dev/null; then
-          az containerapp create \
-            --name $FRONTEND_APP_NAME \
-            --resource-group $RESOURCE_GROUP \
-            --environment $CONTAINERAPP_ENV \
-            --image $FRONTEND_IMAGE \
-            --target-port 80 \
-            --ingress external \
-            --registry-server $ACR_LOGIN_SERVER \
-            --registry-username $(az acr credential show --name $ACR_NAME --query "username" -o tsv) \
-            --registry-password $(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv)
-        fi
+        az containerapp create \
+          --name $FRONTEND_APP_NAME \
+          --resource-group $RESOURCE_GROUP \
+          --environment $CONTAINERAPP_ENV \
+          --image $FRONTEND_IMAGE \
+          --target-port 80 \
+          --ingress external \
+          --registry-server $ACR_LOGIN_SERVER \
+          --registry-username $(az acr credential show --name $ACR_NAME --query "username" -o tsv) \
+          --registry-password $(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv) \
+          --env-vars ELEVENLABS_API_KEY=$ELEVENLABS_API_KEY \
+                    AGENT_ID=$AGENT_ID \
+                    AGENT_PHONE_NUMBER_ID=$AGENT_PHONE_NUMBER_ID \
+                    TWILIO_ACCOUNT_SID=$TWILIO_ACCOUNT_SID \
+                    TWILIO_AUTH_TOKEN=$TWILIO_AUTH_TOKEN \
+                    AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY \
+                    AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT \
+                    AZURE_OPENAI_LOCATION=$AZURE_OPENAI_LOCATION
 
     - name: Create backend app if not exists
       run: |
-        if ! az containerapp show --name $BACKEND_APP_NAME --resource-group $RESOURCE_GROUP &> /dev/null; then
-          az containerapp create \
-            --name $BACKEND_APP_NAME \
-            --resource-group $RESOURCE_GROUP \
-            --environment $CONTAINERAPP_ENV \
-            --image $BACKEND_IMAGE \
-            --target-port 8000 \
-            --ingress external \
-            --registry-server $ACR_LOGIN_SERVER \
-            --registry-username $(az acr credential show --name $ACR_NAME --query "username" -o tsv) \
-            --registry-password $(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv)
-        fi
-
-    - name: Update frontend app
-      run: |
-        az containerapp update \
-          --name $FRONTEND_APP_NAME \
-          --resource-group $RESOURCE_GROUP \
-          --image $FRONTEND_IMAGE
-
-    - name: Update backend app
-      run: |
-        az containerapp update \
+        az containerapp create \
           --name $BACKEND_APP_NAME \
           --resource-group $RESOURCE_GROUP \
-          --image $BACKEND_IMAGE
+          --environment $CONTAINERAPP_ENV \
+          --image $BACKEND_IMAGE \
+          --target-port 8000 \
+          --ingress external \
+          --registry-server $ACR_LOGIN_SERVER \
+          --registry-username $(az acr credential show --name $ACR_NAME --query "username" -o tsv) \
+          --registry-password $(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv) \
+          --env-vars ELEVENLABS_API_KEY=$ELEVENLABS_API_KEY \
+                    AGENT_ID=$AGENT_ID \
+                    AGENT_PHONE_NUMBER_ID=$AGENT_PHONE_NUMBER_ID \
+                    TWILIO_ACCOUNT_SID=$TWILIO_ACCOUNT_SID \
+                    TWILIO_AUTH_TOKEN=$TWILIO_AUTH_TOKEN \
+                    AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY \
+                    AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT \
+                    AZURE_OPENAI_LOCATION=$AZURE_OPENAI_LOCATION
