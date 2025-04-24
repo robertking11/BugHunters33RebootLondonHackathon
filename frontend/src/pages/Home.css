@@ -15,6 +15,13 @@
     text-align: center;
     color: #007f3b; /* Lloyds green */
   }
+
+  .home-text {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+    color: #1f2120; /* Lloyds green */
+  }
   
   .home {
     display: flex;
@@ -87,19 +94,4 @@
     color: #0369a1; /* Dark blue text */
     border-radius: 0.25rem;
     text-align: center;
-  }
-  
-  .call-status {
-    margin-top: 0.5rem;
-    padding: 0.75rem;
-    background-color: #f3f4f6; /* Light gray background */
-    color: #374151; /* Dark gray text */
-    border-radius: 0.25rem;
-    text-align: center;
-  }
-  
-  .poll-result {
-    margin-top: 0.5rem;
-    font-size: 0.875rem; /* Smaller font size */
-    color: #6b7280; /* Gray text */
   }
