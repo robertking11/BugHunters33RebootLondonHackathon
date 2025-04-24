@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Joy from './pages/Joy';
 import Conversations from './pages/Conversations';
+import Home from './pages/Home';
 import './App.css';
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
         </div>
         <div className="content-container">
           <Routes>
-            <Route path="/" element={<h1>Welcome to the Voice Agent App</h1>} />
+            <Route path="/" element={<Home />} />
             <Route path="/joy" element={<Joy />} />
             <Route path="/conversations" element={<Conversations />} />
           </Routes>
