@@ -12,6 +12,7 @@ from elevenlabs.client import ElevenLabs
 from requests.auth import HTTPBasicAuth
 import base64
 from openai import AzureOpenAI
+import uvicorn
 
 load_dotenv()
 
@@ -128,7 +129,7 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "status_msg": None, "call_status": None, "phone_input": "", "flash_message": None, "flash_category": None})
 
 @app.post("/call", response_class=HTMLResponse)
-async def make_call(request: Request, phone_number: str = Form(...)):
+async def make_call(request: Request):
     """Initiate an outbound call, poll for status, and store summary in knowledge base.
 
     Args:
@@ -140,7 +141,11 @@ async def make_call(request: Request, phone_number: str = Form(...)):
     """
     status_msg = None
     call_status = None
-    phone_input = phone_number.strip()
+
+    body = await request.body()
+    data = json.loads(body)
+    phone_input = data.get("phone_number", "").strip()
+
     to_number = format_uk_number(phone_input)
     logger.info(f"Initiating outbound call to {to_number}")
     client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
@@ -233,4 +238,8 @@ async def get_conversation(conversation_id: str):
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 # Mount static directory for assets (if any exist)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+if __name__ == "__main__":
+    uvicorn.run("main_fastapi:app", host="0.0.0.0", port=8000, reload=True)
