@@ -32,7 +32,7 @@ jobs:
           az containerapp create \
             --name ${{ secrets.CONTAINER_APP_NAME }} \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --image ${{ secrets.ACR_NAME }}.azurecr.io/fastapi-app:latest \
+            --image ${{ secrets.ACR_NAME }}.azurecr.io/bughunters33app:latest \
             --environment ${{ secrets.CONTAINER_APP_ENV }} \
             --ingress external \
             --target-port 8000 \
