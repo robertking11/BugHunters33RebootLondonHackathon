@@ -32,12 +32,6 @@
   margin-bottom: 10px;
 }
 
-.side-menu ul li a {
-  text-decoration: none;
-  color: #333; /* Dark gray text */
-  font-weight: bold;
-}
-
 .side-menu ul li a:hover {
   color: #007f3b; /* Lloyds green */
 }
@@ -50,4 +44,20 @@
   background-color: #ffffff; /* White background */
   border-radius: 0.5rem; /* Rounded corners */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.side-menu ul li a {
+  text-decoration: none;
+  color: #333; /* Dark gray text */
+  font-weight: bold;
+  transition: color 0.2s ease-in-out;
+}
+
+.side-menu ul li a:hover {
+  color: #005a29; /* Darker green for hover */
+}
+
+.side-menu ul li .active-link {
+  color: #007f3b; /* Lloyds green for the active link */
+  font-weight: bold;
 }
