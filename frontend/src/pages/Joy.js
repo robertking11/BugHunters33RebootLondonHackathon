@@ -39,9 +39,9 @@ function Joy() {
 
   return (
     <div className="form-container">
-      <h1 className="form-title">Voice Agent Outbound Call</h1>
+      <h1 className="form-title">Talk to Joy ✨</h1>
       <form onSubmit={handleSubmit} className="form">
-        <label className="form-label">UK Phone Number</label>
+        <label className="form-label">Enter a UK Phone Number</label>
         <input
           type="text"
           name="phone_number"
