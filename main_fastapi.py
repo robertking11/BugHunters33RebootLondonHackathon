@@ -204,7 +204,7 @@ async def make_call(request: Request):
             logger.info(f"Saved transcript summary for conversation {latest.conversation_id}")
     except Exception as e:
         logger.error(f"Error saving transcript summary: {e}")
-    return templates.TemplateResponse("index.html", {"request": request, "status_msg": status_msg, "call_status": call_status, "phone_input": phone_input, "poll_result": poll_result, "flash_message": flash_message, "flash_category": flash_category})
+    return JSONResponse(content=json.dumps({"status_msg": status_msg, "call_status": call_status, "phone_input": phone_input, "poll_result": poll_result, "flash_message": flash_message, "flash_category": flash_category}))
 
 @app.get("/conversations")
 async def get_conversations():

@@ -9,9 +9,32 @@ function App() {
   const [callStatus, setCallStatus] = useState('');
   const [pollResult, setPollResult] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form submitted with phone number:', phoneInput);
+    try {
+      const response = await fetch('/call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone_number: phoneInput }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setFlashMessage('Call initiated successfully!');
+        setFlashCategory('success');
+        setStatusMsg(data.status_msg);
+        setCallStatus(data.call_status);
+        setPollResult(data.poll_result || []);
+      } else {
+        setFlashMessage(data.error || 'Something went wrong.');
+        setFlashCategory('error');
+      }
+    } catch (error) {
+      setFlashMessage('Failed to connect to the server.');
+      setFlashCategory('error');
+    }
   };
 
   return (
