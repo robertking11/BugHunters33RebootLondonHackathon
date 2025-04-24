@@ -5,6 +5,7 @@ import Joy from './Joy';
 
 function Home() {
   //TODO: Research for what wording to use to make it more palatable to stressed people
+  //TODO: 
   return (
     <div>
       <h1 className="home-title">Welcome to the Lloyds Banking Group Financial Helppage</h1>
@@ -18,10 +19,10 @@ function Home() {
       <div className="home-container">
         <h1 className="home-title">Talk to Joy</h1>
         <h1 className="home-text">Speak to Joy, our latest AI chatbot.</h1>
-        <div className="home-button">
-          <Link to="/joy"><button>Talk to Joy</button></Link>
+        <div className="home-button-wrapper">
+          <Link className="home-button" to="/joy">Talk to Joy</Link>
           <Routes>
-            <Route path="/joy" element={<Joy />} />
+            <Route className="home-button" path="/joy" element={<Joy />} />
           </Routes>
         </div>
       </div>

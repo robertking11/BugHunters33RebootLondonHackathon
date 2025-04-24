@@ -48,6 +48,11 @@
     box-shadow: 0 0 0 2px rgba(0, 127, 59, 0.5); /* Green focus ring */
   }
   
+  .home-button-wrapper {    /* Button in Home is part of Link, which has strange effects on syntax without a wrapper */
+    display: flex;
+    justify-content: center;
+  }
+
   .home-button {
     width: 100%;
     background-color: #007f3b; /* Lloyds green */
@@ -59,6 +64,9 @@
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
+    box-sizing: border-box;
+    text-decoration: none;
+    text-align: center;
   }
   
   .home-button:hover {

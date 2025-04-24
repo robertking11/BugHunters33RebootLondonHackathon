@@ -145,22 +145,12 @@ async def make_call(request: Request):
         call_status = "No call_sid or Twilio credentials available."
     # Summarize transcript and add to knowledge base
     try:
-        convs = client.conversational_ai.get_conversations(agent_id=AGENT_ID)
-        if convs.conversations:
-            latest = convs.conversations[-1]
-            detail = client.conversational_ai.get_conversation(conversation_id=latest.conversation_id)
-            transcript = detail.transcript or []
-            summary = summarize_transcript(transcript)
-            timestamp = datetime.datetime.utcnow().replace(microsecond=0).isoformat() + 'Z'
-            transcript_lines = []
-            for idx, msg in enumerate(transcript, 1):
-                role = msg.get('role', '?')
-                t = msg.get('time_in_call_secs', '?')
-                text = msg.get('message', '')
-                transcript_lines.append(f"{idx}. [{role}, {t}s]: {text}")
-            doc_text = f"""Date: {timestamp}\nConversation ID: {latest.conversation_id}\nSummary: {summary}\nTranscript:\n""" + "\n".join(transcript_lines)
-            client.conversational_ai.create_knowledge_base_text_document(text=doc_text)
-            logger.info(f"Saved transcript summary for conversation {latest.conversation_id}")
+        latest_transcript_summary = await latest_transcript_summary()
+        if latest_transcript_summary:
+            logger.info(f"Latest transcript summary: {latest_transcript_summary}")
+            # Add to knowledge base
+            client.conversational_ai.create_knowledge_base_text_document(text=latest_transcript_summary)
+            logger.info("Transcript summary added to knowledge base.")
     except Exception as e:
         logger.error(f"Error saving transcript summary: {e}")
     return JSONResponse(content=json.dumps({"status_msg": status_msg, "call_status": call_status, "phone_input": phone_input, "poll_result": poll_result, "flash_message": flash_message, "flash_category": flash_category}))
