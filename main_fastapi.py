@@ -10,6 +10,9 @@ from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from requests.auth import HTTPBasicAuth
+import base64
+from openai import AzureOpenAI
+import uvicorn
 
 load_dotenv()
 
@@ -61,25 +64,72 @@ def get_call_status(account_sid: str, auth_token: str, call_sid: str) -> str:
     return None
 
 def summarize_transcript(transcript: list) -> str:
-    """Summarize a transcript using LLM (placeholder).
+    """Summarize a transcript using Azure OpenAI LLM."""
+    logger.info("Summarizing transcript using Azure OpenAI LLM")
+    try:
+        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "https://rebootllm.openai.azure.com/")
+        api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        # If you need location or deployment name, adjust here
+        deployment = "gpt-4o"  # Or fetch from env if needed
+        
+        client = AzureOpenAI(
+            azure_endpoint=endpoint,
+            api_key=api_key,
+            api_version="2025-01-01-preview",
+        )
 
-    Args:
-        transcript (list): List of transcript entries (dicts).
+        # Format transcript as a string
+        transcript_text = "\n".join([
+            f"{entry.get('speaker', 'Unknown')}: {entry.get('text', str(entry))}" if isinstance(entry, dict) else str(entry)
+            for entry in transcript
+        ])
 
-    Returns:
-        str: Summary string (placeholder).
-    """
-    # TODO: Replace with Azure OpenAI call
-    logger.info("Summarizing transcript (placeholder)")
-    return "SUMMARY_PLACEHOLDER"
+        chat_prompt = [
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "You are an AI assistant that simply summarises call transcripts in a clear coherent way, keeping all the key points. Given a transcript, simply give a summary of the call and key points discussed. Secondly give feedback on the call to the user e.g. keep up the good work on x. Do the feedback in bullet points. ENSURE THE OUTPUT IS NO LONGER THAN 400 WORDS MAX, DO NOT GO ABOVE THIS LIMIT."
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": transcript_text
+                    }
+                ]
+            }
+        ]
+
+        completion = client.chat.completions.create(
+            model=deployment,
+            messages=chat_prompt,
+            max_tokens=800,
+            temperature=0.7,
+            top_p=0.95,
+            frequency_penalty=0,
+            presence_penalty=0,
+            stop=None,
+            stream=False
+        )
+        # Extract the summary from the response
+        summary = completion.choices[0].message.content if completion.choices else "No summary generated."
+        return summary
+    except Exception as e:
+        logger.error(f"Error during transcript summarization: {e}")
+        return "Error generating summary."
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     """Render the main page with form for outbound call initiation."""
     return templates.TemplateResponse("index.html", {"request": request, "status_msg": None, "call_status": None, "phone_input": "", "flash_message": None, "flash_category": None})
 
-@app.post("/", response_class=HTMLResponse)
-async def make_call(request: Request, phone_number: str = Form(...)):
+@app.post("/call", response_class=HTMLResponse)
+async def make_call(request: Request):
     """Initiate an outbound call, poll for status, and store summary in knowledge base.
 
     Args:
@@ -91,7 +141,11 @@ async def make_call(request: Request, phone_number: str = Form(...)):
     """
     status_msg = None
     call_status = None
-    phone_input = phone_number.strip()
+
+    body = await request.body()
+    data = json.loads(body)
+    phone_input = data.get("phone_number", "").strip()
+
     to_number = format_uk_number(phone_input)
     logger.info(f"Initiating outbound call to {to_number}")
     client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
@@ -150,7 +204,7 @@ async def make_call(request: Request, phone_number: str = Form(...)):
             logger.info(f"Saved transcript summary for conversation {latest.conversation_id}")
     except Exception as e:
         logger.error(f"Error saving transcript summary: {e}")
-    return templates.TemplateResponse("index.html", {"request": request, "status_msg": status_msg, "call_status": call_status, "phone_input": phone_input, "poll_result": poll_result, "flash_message": flash_message, "flash_category": flash_category})
+    return JSONResponse(content=json.dumps({"status_msg": status_msg, "call_status": call_status, "phone_input": phone_input, "poll_result": poll_result, "flash_message": flash_message, "flash_category": flash_category}))
 
 @app.get("/conversations")
 async def get_conversations():
@@ -184,4 +238,8 @@ async def get_conversation(conversation_id: str):
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 # Mount static directory for assets (if any exist)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+if __name__ == "__main__":
+    uvicorn.run("main_fastapi:app", host="0.0.0.0", port=8000, reload=True)
