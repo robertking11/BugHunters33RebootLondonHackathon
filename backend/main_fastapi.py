@@ -8,6 +8,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from requests.auth import HTTPBasicAuth
@@ -19,6 +20,7 @@ from typing import Dict
 load_dotenv()
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
 app.add_middleware(
     CORSMiddleware,
