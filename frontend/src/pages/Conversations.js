@@ -8,10 +8,10 @@ function Conversations() {
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const response = await fetch('/conversations');
+        const response = await fetch('/latest_transcript_summary');
         const data = await response.json();
         if (response.ok) {
-          setConversations(data.conversations || []);
+          setConversations([data] || []);
         } else {
           setError(data.error || 'Failed to fetch conversations.');
         }
@@ -25,13 +25,13 @@ function Conversations() {
 
   return (
     <div className="conversations-container">
-      <h1>Conversations</h1>
+      <h1>Conversations 📚</h1>
       {error && <p className="error-message">{error}</p>}
       <ul>
         {conversations.map((conversation) => (
           <li key={conversation.id}>
-            <strong>ID:</strong> {conversation.id} <br />
-            <strong>Details:</strong> {conversation.details}
+            <strong>Date:</strong> {conversation.time} <br />
+            <strong>Summary:</strong> {conversation.transcript_summary} <br />
           </li>
         ))}
       </ul>
