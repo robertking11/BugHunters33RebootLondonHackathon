@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Agent Outbound Call</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">Voice Agent Outbound Call</h1>
+    <form method="POST" class="space-y-4">
+      <label class="block text-gray-700 font-semibold">UK Phone Number</label>
+      <input type="text" name="phone_number" value="{{ phone_input }}" placeholder="e.g. 07xxxxxxxxx or +447xxxxxxxxx" class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Call</button>
+    </form>
+    {% if flash_message %}
+      <div class="mt-4">
+        <div class="p-2 rounded text-center {{ 'bg-red-200 text-red-800' if flash_category == 'error' else 'bg-green-200 text-green-800' }}">{{ flash_message }}</div>
+      </div>
+    {% endif %}
+    {% if status_msg %}
+      <div class="mt-6 p-3 bg-blue-100 text-blue-800 rounded text-center">
+        <strong>API Response:</strong> {{ status_msg }}
+      </div>
+    {% endif %}
+    {% if call_status %}
+      <div class="mt-2 p-3 bg-gray-100 text-gray-800 rounded text-center">
+        <strong>Call Status:</strong> {{ call_status }}
+      </div>
+      {% if poll_result %}
+        <div class="mt-2 text-xs text-gray-500">Status history: {{ poll_result|join(', ') }}</div>
+      {% endif %}
+    {% endif %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+Flask
+fastapi
+uvicorn
+jinja2
+python-dotenv
+requests
+elevenlabs
+python-multipart
