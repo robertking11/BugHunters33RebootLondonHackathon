@@ -1,119 +1,24 @@
 .app-container {
-  background-color: #f3f4f6; /* Light gray background */
+  display: flex;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.form-container {
-  background-color: #ffffff; /* White background */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  border-radius: 0.5rem; /* Rounded corners */
-  padding: 2rem;
-  width: 100%;
-  max-width: 28rem;
-}
-
-.form-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  color: #007f3b; /* Lloyds green */
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-label {
-  color: #374151; /* Dark gray text */
-  font-weight: 600;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db; /* Light gray border */
-  border-radius: 0.25rem;
-  outline: none;
-  box-sizing: border-box;
-}
-
-.form-input:focus {
-  border-color: #007f3b; /* Lloyds green */
-  box-shadow: 0 0 0 2px rgba(0, 127, 59, 0.5); /* Green focus ring */
-}
-
-.form-button {
-  width: 100%;
-  background-color: #007f3b; /* Lloyds green */
-  color: #ffffff; /* White text */
-  padding: 0.5rem 0;
-  border-radius: 0.25rem;
-  transition: background-color 0.2s;
-}
-
-.form-button:hover {
-  background-color: #005a29; /* Darker green for hover */
-}
-
-.flash-message {
-  margin-top: 1rem;
-}
-
-.flash-message-content {
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  text-align: center;
-}
-
-.flash-error {
-  background-color: #fef2f2; /* Light red background */
-  color: #b91c1c; /* Dark red text */
-}
-
-.flash-success {
-  background-color: #d1fae5; /* Light green background */
-  color: #065f46; /* Dark green text */
-}
-
-.status-message {
-  margin-top: 1.5rem;
-  padding: 0.75rem;
-  background-color: #e0f2fe; /* Light blue background */
-  color: #0369a1; /* Dark blue text */
-  border-radius: 0.25rem;
-  text-align: center;
-}
-
-.call-status {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
   background-color: #f3f4f6; /* Light gray background */
-  color: #374151; /* Dark gray text */
-  border-radius: 0.25rem;
-  text-align: center;
-}
-
-.poll-result {
-  margin-top: 0.5rem;
-  font-size: 0.75rem;
-  color: #6b7280; /* Gray text */
 }
 
 .side-menu {
-  width: 200px;
+  width: 250px;
   background-color: #f4f4f4; /* Light gray background */
-  padding: 20px;
+  padding: 30px;
   border-right: 1px solid #ddd;
+  position: fixed; /* Fix the side menu in place */
+  height: 100vh; /* Full height */
+  overflow-y: auto; /* Scroll if content overflows */
+  vertical-align: middle;
+  display: table-cell;
+  font-size: 1.5rem;
 }
 
 .side-menu h2 {
-  font-size: 1.5rem;
+  font-size: 2rem;
   margin-bottom: 1rem;
   color: #007f3b; /* Lloyds green */
 }
@@ -135,4 +40,14 @@
 
 .side-menu ul li a:hover {
   color: #007f3b; /* Lloyds green */
+}
+
+.content-container {
+  margin-left: 200px; /* Leave space for the fixed side menu */
+  padding: 20px;
+  width: calc(100% - 200px); /* Adjust width to account for the side menu */
+  box-sizing: border-box;
+  background-color: #ffffff; /* White background */
+  border-radius: 0.5rem; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }

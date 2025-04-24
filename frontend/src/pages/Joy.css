@@ -3,13 +3,12 @@
     background-color: #ffffff; /* White background */
     border-radius: 0.5rem; /* Rounded corners */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    max-width: 600px;
-    margin: 0 auto;
-    border: 1px solid #d1d5db; /* Light gray border */
+    max-width: 700px;
+    margin: 20px auto;
   }
   
   .form-title {
-    font-size: 1.75rem; /* Larger font size */
+    font-size: 2rem; /* Larger font size */
     font-weight: bold;
     margin-bottom: 1.5rem;
     text-align: center;
@@ -25,6 +24,7 @@
   .form-label {
     color: #374151; /* Dark gray text */
     font-weight: 600;
+    font-size: 1.3rem;
   }
   
   .form-input {
@@ -34,6 +34,7 @@
     border-radius: 0.25rem;
     outline: none;
     box-sizing: border-box;
+    font-size: 1.25rem;
   }
   
   .form-input:focus {
@@ -48,7 +49,7 @@
     padding: 0.75rem 1rem;
     border-radius: 0.25rem;
     border: none;
-    font-size: 1rem;
+    font-size: 1.25rem;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
@@ -100,6 +101,6 @@
   
   .poll-result {
     margin-top: 0.5rem;
-    font-size: 0.875rem; /* Smaller font size */
+    font-size: 1rem; /* Smaller font size */
     color: #6b7280; /* Gray text */
   }
