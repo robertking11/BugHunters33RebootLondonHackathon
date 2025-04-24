@@ -13,6 +13,7 @@ from requests.auth import HTTPBasicAuth
 import base64
 from openai import AzureOpenAI
 import uvicorn
+from typing import Dict
 
 load_dotenv()
 
@@ -63,65 +64,15 @@ def get_call_status(account_sid: str, auth_token: str, call_sid: str) -> str:
     logger.error(f"Twilio status fetch error: {resp.status_code} {resp.text}")
     return None
 
-def summarize_transcript(transcript: list) -> str:
-    """Summarize a transcript using Azure OpenAI LLM."""
-    logger.info("Summarizing transcript using Azure OpenAI LLM")
-    try:
-        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "https://rebootllm.openai.azure.com/")
-        api_key = os.getenv("AZURE_OPENAI_API_KEY")
-        # If you need location or deployment name, adjust here
-        deployment = "gpt-4o"  # Or fetch from env if needed
-        
-        client = AzureOpenAI(
-            azure_endpoint=endpoint,
-            api_key=api_key,
-            api_version="2025-01-01-preview",
-        )
-
-        # Format transcript as a string
-        transcript_text = "\n".join([
-            f"{entry.get('speaker', 'Unknown')}: {entry.get('text', str(entry))}" if isinstance(entry, dict) else str(entry)
-            for entry in transcript
-        ])
-
-        chat_prompt = [
-            {
-                "role": "system",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "You are an AI assistant that simply summarises call transcripts in a clear coherent way, keeping all the key points. Given a transcript, simply give a summary of the call and key points discussed. Secondly give feedback on the call to the user e.g. keep up the good work on x. Do the feedback in bullet points. ENSURE THE OUTPUT IS NO LONGER THAN 400 WORDS MAX, DO NOT GO ABOVE THIS LIMIT."
-                    }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": transcript_text
-                    }
-                ]
-            }
-        ]
-
-        completion = client.chat.completions.create(
-            model=deployment,
-            messages=chat_prompt,
-            max_tokens=800,
-            temperature=0.7,
-            top_p=0.95,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=None,
-            stream=False
-        )
-        # Extract the summary from the response
-        summary = completion.choices[0].message.content if completion.choices else "No summary generated."
-        return summary
-    except Exception as e:
-        logger.error(f"Error during transcript summarization: {e}")
-        return "Error generating summary."
+def get_conversation_data(conversation_id: str):
+    """Return conversation details as dict/model for internal use."""
+    client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
+    detail = client.conversational_ai.get_conversation(conversation_id=conversation_id)
+    if hasattr(detail, 'dict'):
+        return detail.dict()
+    if hasattr(detail, '__dict__'):
+        return dict(detail.__dict__)
+    return detail
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -236,6 +187,34 @@ async def get_conversation(conversation_id: str):
     except Exception as e:
         logger.error(f"Error fetching conversation details: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
+
+@app.get("/latest_transcript_summary", response_class=JSONResponse)
+async def latest_transcript_summary() -> JSONResponse:
+    """Return the most recent conversation summary in JSON format, matching the logic in simple_transcript_summary.py."""
+    api_key = os.environ["ELEVENLABS_API_KEY"]
+    client = ElevenLabs(api_key=api_key)
+
+    result = client.conversational_ai.get_conversations(agent_id=AGENT_ID)
+    conversations = result.conversations
+
+    if not conversations:
+        return JSONResponse(content={"error": "No conversations found."}, status_code=404)
+
+    for convo in conversations:
+        convo_full = client.conversational_ai.get_conversation(conversation_id=convo.conversation_id)
+        transcript = convo_full.analysis.transcript_summary
+        use_transcript = transcript != "Summary couldn't be generated for this call."
+
+        if convo.call_duration_secs >= 10 and use_transcript:
+            dt = datetime.datetime.fromtimestamp(convo.start_time_unix_secs)
+            convo_details: Dict = {
+                "time": dt.isoformat(),
+                "conversation_id": convo.conversation_id,
+                "duration_seconds": convo.call_duration_secs,
+                "transcript_summary": convo_full.analysis.transcript_summary
+            }
+            return JSONResponse(content=convo_details)
+    return JSONResponse(content={"error": "No matching conversation found."}, status_code=404)
 
 # Mount static directory for assets (if any exist)
 # app.mount("/static", StaticFiles(directory="static"), name="static")
