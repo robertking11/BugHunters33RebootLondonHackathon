@@ -1,88 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Joy from './pages/Joy';
+import Conversations from './pages/Conversations';
 import './App.css';
 
 function App() {
-  const [phoneInput, setPhoneInput] = useState('');
-  const [flashMessage, setFlashMessage] = useState('');
-  const [flashCategory, setFlashCategory] = useState('');
-  const [statusMsg, setStatusMsg] = useState('');
-  const [callStatus, setCallStatus] = useState('');
-  const [pollResult, setPollResult] = useState([]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('Form submitted with phone number:', phoneInput);
-    try {
-      const response = await fetch('/call', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone_number: phoneInput }),
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        setFlashMessage('Call initiated successfully!');
-        setFlashCategory('success');
-        setStatusMsg(data.status_msg);
-        setCallStatus(data.call_status);
-        setPollResult(data.poll_result || []);
-      } else {
-        setFlashMessage(data.error || 'Something went wrong.');
-        setFlashCategory('error');
-      }
-    } catch (error) {
-      setFlashMessage('Failed to connect to the server.');
-      setFlashCategory('error');
-    }
-  };
-
   return (
-    <div className="app-container">
-      <div className="form-container">
-        <h1 className="form-title">Voice Agent Outbound Call</h1>
-        <form onSubmit={handleSubmit} className="form">
-          <label className="form-label">UK Phone Number</label>
-          <input
-            type="text"
-            name="phone_number"
-            value={phoneInput}
-            onChange={(e) => setPhoneInput(e.target.value)}
-            placeholder="e.g. 07xxxxxxxxx or +447xxxxxxxxx"
-            className="form-input"
-          />
-          <button type="submit" className="form-button">
-            Call
-          </button>
-        </form>
-        {flashMessage && (
-          <div className="flash-message">
-            <div
-              className={`flash-message-content ${
-                flashCategory === 'error' ? 'flash-error' : 'flash-success'
-              }`}
-            >
-              {flashMessage}
-            </div>
-          </div>
-        )}
-        {statusMsg && (
-          <div className="status-message">
-            <strong>API Response:</strong> {statusMsg}
-          </div>
-        )}
-        {callStatus && (
-          <div className="call-status">
-            <strong>Call Status:</strong> {callStatus}
-          </div>
-        )}
-        {pollResult.length > 0 && (
-          <div className="poll-result">
-            Status history: {pollResult.join(', ')}
-          </div>
-        )}
+    <Router>
+      <div className="app-container">
+        <div className="side-menu">
+          <h2>Menu</h2>
+          <ul>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/joy">Talk to Joy</Link></li>
+            <li><Link to="/conversations">Conversations</Link></li>
+          </ul>
+        </div>
+        <div className="content-container">
+          <Routes>
+            <Route path="/" element={<h1>Welcome to the Voice Agent App</h1>} />
+            <Route path="/joy" element={<Joy />} />
+            <Route path="/conversations" element={<Conversations />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
 

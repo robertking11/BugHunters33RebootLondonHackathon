@@ -1,0 +1,45 @@
+.conversations-container {
+    padding: 20px;
+    background-color: #ffffff; /* White background */
+    border-radius: 0.5rem; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    max-width: 800px;
+    margin: 20px auto;
+  }
+  
+  .conversations-container h1 {
+    font-size: 1.75rem; /* Larger font size */
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #007f3b; /* Lloyds green */
+  }
+  
+  .error-message {
+    color: #b91c1c; /* Dark red text */
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .conversations-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .conversations-container li {
+    padding: 15px;
+    border: 1px solid #d1d5db; /* Light gray border */
+    border-radius: 0.25rem;
+    margin-bottom: 10px;
+    background-color: #f9fafb; /* Light gray background */
+  }
+  
+  .conversations-container li strong {
+    color: #374151; /* Dark gray text */
+  }
+  
+  .conversations-container li:hover {
+    background-color: #e6f4ea; /* Light green background for hover */
+    border-color: #007f3b; /* Lloyds green border for hover */
+  }

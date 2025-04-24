@@ -1,5 +1,5 @@
 .app-container {
-  background-color: #f3f4f6; /* Tailwind's bg-gray-100 */
+  background-color: #f3f4f6; /* Light gray background */
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -7,100 +7,132 @@
 }
 
 .form-container {
-  background-color: #ffffff; /* Tailwind's bg-white */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tailwind's shadow-lg */
-  border-radius: 0.5rem; /* Tailwind's rounded-lg */
-  padding: 2rem; /* Tailwind's p-8 */
+  background-color: #ffffff; /* White background */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border-radius: 0.5rem; /* Rounded corners */
+  padding: 2rem;
   width: 100%;
-  max-width: 28rem; /* Tailwind's max-w-md */
+  max-width: 28rem;
 }
 
 .form-title {
-  font-size: 1.5rem; /* Tailwind's text-2xl */
-  font-weight: bold; /* Tailwind's font-bold */
-  margin-bottom: 1.5rem; /* Tailwind's mb-6 */
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
   text-align: center;
-  color: #1d4ed8; /* Tailwind's text-blue-700 */
+  color: #007f3b; /* Lloyds green */
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* Tailwind's space-y-4 */
+  gap: 1rem;
 }
 
 .form-label {
-  color: #374151; /* Tailwind's text-gray-700 */
-  font-weight: 600; /* Tailwind's font-semibold */
+  color: #374151; /* Dark gray text */
+  font-weight: 600;
 }
 
 .form-input {
   width: 100%;
-  padding: 0.5rem 1rem; /* Tailwind's px-4 py-2 */
-  border: 1px solid #d1d5db; /* Tailwind's border */
-  border-radius: 0.25rem; /* Tailwind's rounded */
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db; /* Light gray border */
+  border-radius: 0.25rem;
   outline: none;
   box-sizing: border-box;
 }
 
 .form-input:focus {
-  border-color: #3b82f6; /* Tailwind's focus:ring-blue-400 */
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Tailwind's focus:ring-2 */
+  border-color: #007f3b; /* Lloyds green */
+  box-shadow: 0 0 0 2px rgba(0, 127, 59, 0.5); /* Green focus ring */
 }
 
 .form-button {
   width: 100%;
-  background-color: #2563eb; /* Tailwind's bg-blue-600 */
-  color: #ffffff; /* Tailwind's text-white */
-  padding: 0.5rem 0; /* Tailwind's py-2 */
-  border-radius: 0.25rem; /* Tailwind's rounded */
-  transition: background-color 0.2s; /* Tailwind's transition */
+  background-color: #007f3b; /* Lloyds green */
+  color: #ffffff; /* White text */
+  padding: 0.5rem 0;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
 }
 
 .form-button:hover {
-  background-color: #1e40af; /* Tailwind's hover:bg-blue-700 */
+  background-color: #005a29; /* Darker green for hover */
 }
 
 .flash-message {
-  margin-top: 1rem; /* Tailwind's mt-4 */
+  margin-top: 1rem;
 }
 
 .flash-message-content {
-  padding: 0.5rem; /* Tailwind's p-2 */
-  border-radius: 0.25rem; /* Tailwind's rounded */
+  padding: 0.5rem;
+  border-radius: 0.25rem;
   text-align: center;
 }
 
 .flash-error {
-  background-color: #fecaca; /* Tailwind's bg-red-200 */
-  color: #b91c1c; /* Tailwind's text-red-800 */
+  background-color: #fef2f2; /* Light red background */
+  color: #b91c1c; /* Dark red text */
 }
 
 .flash-success {
-  background-color: #bbf7d0; /* Tailwind's bg-green-200 */
-  color: #065f46; /* Tailwind's text-green-800 */
+  background-color: #d1fae5; /* Light green background */
+  color: #065f46; /* Dark green text */
 }
 
 .status-message {
-  margin-top: 1.5rem; /* Tailwind's mt-6 */
-  padding: 0.75rem; /* Tailwind's p-3 */
-  background-color: #dbeafe; /* Tailwind's bg-blue-100 */
-  color: #1e3a8a; /* Tailwind's text-blue-800 */
-  border-radius: 0.25rem; /* Tailwind's rounded */
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  background-color: #e0f2fe; /* Light blue background */
+  color: #0369a1; /* Dark blue text */
+  border-radius: 0.25rem;
   text-align: center;
 }
 
 .call-status {
-  margin-top: 0.5rem; /* Tailwind's mt-2 */
-  padding: 0.75rem; /* Tailwind's p-3 */
-  background-color: #f3f4f6; /* Tailwind's bg-gray-100 */
-  color: #374151; /* Tailwind's text-gray-800 */
-  border-radius: 0.25rem; /* Tailwind's rounded */
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: #f3f4f6; /* Light gray background */
+  color: #374151; /* Dark gray text */
+  border-radius: 0.25rem;
   text-align: center;
 }
 
 .poll-result {
-  margin-top: 0.5rem; /* Tailwind's mt-2 */
-  font-size: 0.75rem; /* Tailwind's text-xs */
-  color: #6b7280; /* Tailwind's text-gray-500 */
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280; /* Gray text */
+}
+
+.side-menu {
+  width: 200px;
+  background-color: #f4f4f4; /* Light gray background */
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+
+.side-menu h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #007f3b; /* Lloyds green */
+}
+
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.side-menu ul li {
+  margin-bottom: 10px;
+}
+
+.side-menu ul li a {
+  text-decoration: none;
+  color: #333; /* Dark gray text */
+  font-weight: bold;
+}
+
+.side-menu ul li a:hover {
+  color: #007f3b; /* Lloyds green */
 }
