@@ -10,6 +10,8 @@ from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from requests.auth import HTTPBasicAuth
+import base64
+from openai import AzureOpenAI
 
 load_dotenv()
 
@@ -61,24 +63,71 @@ def get_call_status(account_sid: str, auth_token: str, call_sid: str) -> str:
     return None
 
 def summarize_transcript(transcript: list) -> str:
-    """Summarize a transcript using LLM (placeholder).
+    """Summarize a transcript using Azure OpenAI LLM."""
+    logger.info("Summarizing transcript using Azure OpenAI LLM")
+    try:
+        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "https://rebootllm.openai.azure.com/")
+        api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        # If you need location or deployment name, adjust here
+        deployment = "gpt-4o"  # Or fetch from env if needed
+        
+        client = AzureOpenAI(
+            azure_endpoint=endpoint,
+            api_key=api_key,
+            api_version="2025-01-01-preview",
+        )
 
-    Args:
-        transcript (list): List of transcript entries (dicts).
+        # Format transcript as a string
+        transcript_text = "\n".join([
+            f"{entry.get('speaker', 'Unknown')}: {entry.get('text', str(entry))}" if isinstance(entry, dict) else str(entry)
+            for entry in transcript
+        ])
 
-    Returns:
-        str: Summary string (placeholder).
-    """
-    # TODO: Replace with Azure OpenAI call
-    logger.info("Summarizing transcript (placeholder)")
-    return "SUMMARY_PLACEHOLDER"
+        chat_prompt = [
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "You are an AI assistant that simply summarises call transcripts in a clear coherent way, keeping all the key points. Given a transcript, simply give a summary of the call and key points discussed. Secondly give feedback on the call to the user e.g. keep up the good work on x. Do the feedback in bullet points. ENSURE THE OUTPUT IS NO LONGER THAN 400 WORDS MAX, DO NOT GO ABOVE THIS LIMIT."
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": transcript_text
+                    }
+                ]
+            }
+        ]
+
+        completion = client.chat.completions.create(
+            model=deployment,
+            messages=chat_prompt,
+            max_tokens=800,
+            temperature=0.7,
+            top_p=0.95,
+            frequency_penalty=0,
+            presence_penalty=0,
+            stop=None,
+            stream=False
+        )
+        # Extract the summary from the response
+        summary = completion.choices[0].message.content if completion.choices else "No summary generated."
+        return summary
+    except Exception as e:
+        logger.error(f"Error during transcript summarization: {e}")
+        return "Error generating summary."
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     """Render the main page with form for outbound call initiation."""
     return templates.TemplateResponse("index.html", {"request": request, "status_msg": None, "call_status": None, "phone_input": "", "flash_message": None, "flash_category": None})
 
-@app.post("/", response_class=HTMLResponse)
+@app.post("/call", response_class=HTMLResponse)
 async def make_call(request: Request, phone_number: str = Form(...)):
     """Initiate an outbound call, poll for status, and store summary in knowledge base.
 
