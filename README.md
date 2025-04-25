@@ -1,7 +1,5 @@
 # RebootLondonHackathon
 
-<img width="1356" alt="image" src="https://github.com/user-attachments/assets/7c45f412-a4c6-4fc8-993e-129fbc4bbeb9" />
-
 
 
 This is the repository for the Reboot London Hackathon.
